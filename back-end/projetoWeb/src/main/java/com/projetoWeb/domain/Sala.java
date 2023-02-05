@@ -20,8 +20,9 @@ public class Sala implements Serializable{
 	private String nome;
 	private String link;
 	private double perimetro;
-	private String longitude;
-	private String latitude;
+	private double longitude;
+	private double latitude;
+	private Boolean notificacaoPersistente;
 	
 	@OneToOne
 	private Usuario usuario;
@@ -32,8 +33,8 @@ public class Sala implements Serializable{
 	public Sala() {
 	}
 
-	public Sala(Integer id, String nome, String link, double perimetro, String longitude, String latitude,
-			Usuario usuario, List<Usuario> participantes) {
+	public Sala(Integer id, String nome, String link, double perimetro, double longitude, double latitude,
+			Usuario usuario, List<Usuario> participantes, Boolean notificacaoPersistente) {
 		this.id = id;
 		this.nome = nome;
 		this.link = link;
@@ -42,6 +43,7 @@ public class Sala implements Serializable{
 		this.latitude = latitude;
 		this.usuario = usuario;
 		this.participantes = participantes;
+		this.notificacaoPersistente = notificacaoPersistente;
 	}
 
 	public Integer getId() {
@@ -76,19 +78,19 @@ public class Sala implements Serializable{
 		this.perimetro = perimetro;
 	}
 
-	public String getLongitude() {
+	public double getLongitude() {
 		return longitude;
 	}
 
-	public void setLongitude(String longitude) {
+	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
 
-	public String getLatitude() {
+	public double getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(String latitude) {
+	public void setLatitude(double latitude) {
 		this.latitude = latitude;
 	}
 
@@ -107,4 +109,13 @@ public class Sala implements Serializable{
 	public void setParticipantes(List<Usuario> participantes) {
 		this.participantes = participantes;
 	}
+
+	public Boolean getNotificacaoPersistente() {
+		return notificacaoPersistente;
+	}
+
+	public void setNotificacaoPersistente(Boolean notificacaoPersistente) {
+		this.notificacaoPersistente = notificacaoPersistente;
+	}
+	
 }

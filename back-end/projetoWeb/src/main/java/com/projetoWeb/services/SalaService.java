@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.projetoWeb.domain.Sala;
+import com.projetoWeb.domain.Usuario;
 import com.projetoWeb.dtos.SalaDTO;
 import com.projetoWeb.exceptions.ObjectNotFoundException;
 import com.projetoWeb.repositories.SalaRepository;
@@ -32,7 +33,7 @@ public class SalaService {
 	public Sala create(SalaDTO objDTO) {
 		return salaRepository.save(new Sala(null, objDTO.getNome(), objDTO.getLink(),
 				objDTO.getPerimetro(), objDTO.getLongitude(), objDTO.getLatitude(),
-				objDTO.getUsuario(), objDTO.getParticipantes()));
+				objDTO.getUsuario(), objDTO.getParticipantes(), objDTO.getNotificacaoPersistente()));
 	}
 
 	public Sala update(Integer id, @Valid SalaDTO objDTO) {
@@ -52,5 +53,25 @@ public class SalaService {
 	public void delete(Integer id) {
 		findById(id);
 		salaRepository.deleteById(id);
+	}
+	
+	public List<Usuario> listarParticipantes(Integer salaId) {
+		Sala sala = findById(salaId);
+		return sala.getParticipantes();
+	}
+	
+	public Double distance(SalaDTO sala, double lat1, double lon1) {
+		double R = 6371; // Raio da terra em km
+		double lat2 = sala.getLatitude();
+		double lon2 = sala.getLongitude();
+		double dLat = Math.toRadians(lat2-lat1);
+		double dLon = Math.toRadians(lon2-lon1);
+		lat1 = Math.toRadians(lat1);
+		lat2 = Math.toRadians(lat2);
+
+		double a = Math.pow(Math.sin(dLat/2),2) + Math.pow(Math.sin(dLon/2),2) * Math.cos(lat1) * Math.cos(lat2);
+		double c = 2 * Math.asin(Math.sqrt(a));
+		
+		return ((R * c) * 1000);
 	}
 }
