@@ -46,7 +46,7 @@ public class ProjetoWebApplication implements CommandLineRunner {
 
 		usuarioRepository.saveAll(Arrays.asList(anderson, davidson, dudu, nelson));
 
-		Sala sala1 = new Sala(null, "Congraternização", "linkteste.com", 0, "349498", "80586", nelson,
+		Sala sala1 = new Sala(null, "Congraternização", "linkteste.com", 0, 349498.0, 80586.0, nelson,
 				Arrays.asList(), true);
 
 		salaRepository.saveAll(Arrays.asList(sala1));
