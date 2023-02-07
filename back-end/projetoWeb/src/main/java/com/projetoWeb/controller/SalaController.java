@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.google.gson.Gson;
 import com.projetoWeb.domain.Sala;
 import com.projetoWeb.domain.Usuario;
 import com.projetoWeb.dtos.SalaDTO;
@@ -51,13 +52,16 @@ public class SalaController {
 	}
 
 	@PostMapping
-	public ResponseEntity<SalaDTO> create(@RequestBody SalaDTO objDTO) {
+	public ResponseEntity<String> create(@RequestBody SalaDTO objDTO) {
+		objDTO.setParticipantes(new ArrayList<>());
+		objDTO.getParticipantes().add(objDTO.getUsuario());
 		Sala newObj = salaService.create(objDTO);
+		SalaDTO salaDTO = new SalaDTO(newObj);
 		
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/{id}").buildAndExpand(newObj.getId()).toUri();
+		Gson gson = new Gson();
+		String jsonStr = gson.toJson(salaDTO);
 		
-		return ResponseEntity.created(uri).build();
+		return ResponseEntity.ok().body(jsonStr);
 	}
 	
 	@PutMapping(value = "/{id}")
