@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.projetoWeb.domain.Usuario;
+import com.projetoWeb.dtos.LoginObject;
 import com.projetoWeb.dtos.UsuarioDTO;
 import com.projetoWeb.services.UsuarioService;
 
@@ -64,6 +65,19 @@ public class UsuarioController {
 	public ResponseEntity<Void> delete(@PathVariable Integer id){
 		usuarioService.delete(id);
 		return ResponseEntity.noContent().build();
+	}
+	
+	@PostMapping(value = "/login")
+	public ResponseEntity<UsuarioDTO> findById(@RequestBody LoginObject login){
+		List<UsuarioDTO> listDTO = usuarioService.findAll()
+				.stream().map(obj -> new UsuarioDTO(obj)).collect(Collectors.toList());
+		
+		for (UsuarioDTO usuarioDTO : listDTO) {
+			if(usuarioDTO.getEmail().equals(login.getEmail()) && usuarioDTO.getSenha().equals(login.getSenha())) {
+				return ResponseEntity.ok().body(usuarioDTO);
+			}
+		}
+		return ResponseEntity.ok().body(null);
 	}
 }
 

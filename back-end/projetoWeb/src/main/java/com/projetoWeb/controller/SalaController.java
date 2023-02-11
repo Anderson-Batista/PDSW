@@ -1,12 +1,10 @@
 package com.projetoWeb.controller;
 
-import java.net.URI;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,13 +15,16 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.google.gson.Gson;
+import com.projetoWeb.domain.Alerta;
 import com.projetoWeb.domain.Sala;
 import com.projetoWeb.domain.Usuario;
+import com.projetoWeb.dtos.AlertaDTO;
 import com.projetoWeb.dtos.SalaDTO;
 import com.projetoWeb.dtos.UsuarioDTO;
+import com.projetoWeb.dtos.UsuarioForaPerimetro;
+import com.projetoWeb.dtos.UsuarioLocalizacao;
+import com.projetoWeb.services.AlertaService;
 import com.projetoWeb.services.SalaService;
 import com.projetoWeb.services.UsuarioService;
 
@@ -36,6 +37,9 @@ public class SalaController {
 	
 	@Autowired
 	private UsuarioService usuarioService;
+	
+	@Autowired
+	private AlertaService alertaService;
 	
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<SalaDTO> findById(@PathVariable Integer id){
@@ -52,16 +56,13 @@ public class SalaController {
 	}
 
 	@PostMapping
-	public ResponseEntity<String> create(@RequestBody SalaDTO objDTO) {
+	public ResponseEntity<SalaDTO> create(@RequestBody SalaDTO objDTO) {
 		objDTO.setParticipantes(new ArrayList<>());
 		objDTO.getParticipantes().add(objDTO.getUsuario());
 		Sala newObj = salaService.create(objDTO);
 		SalaDTO salaDTO = new SalaDTO(newObj);
 		
-		Gson gson = new Gson();
-		String jsonStr = gson.toJson(salaDTO);
-		
-		return ResponseEntity.ok().body(jsonStr);
+		return ResponseEntity.ok().body(salaDTO);
 	}
 	
 	@PutMapping(value = "/{id}")
@@ -95,6 +96,43 @@ public class SalaController {
 		}
 		return ResponseEntity.ok().body(result);
 	}
+	
+	@PostMapping(value = "/localizacaoUsuario")
+	public ResponseEntity<UsuarioForaPerimetro> localizacaoUsuario(@RequestBody UsuarioLocalizacao usrLoc) {
+		Sala sala = salaService.findById(usrLoc.getSala());
+		Usuario usuario = usuarioService.findById(usrLoc.getUsuario());
+		double latitude = usrLoc.getLatitude();
+		double longitude = usrLoc.getLongitude();
+		
+		List<Alerta> listAlerta = alertaService.findAll();
+		
+		for (Alerta alertaDTO : listAlerta) {
+			if(alertaDTO.getIdSala().getId().equals(sala.getId())) {
+				UsuarioForaPerimetro userFPr= new UsuarioForaPerimetro(alertaDTO);
+				userFPr.setNotificacaoPersistente(sala.getNotificacaoPersistente());
+				return ResponseEntity.ok().body(userFPr);
+			} else if(alertaDTO.getIdUsuario().getId().equals(alertaDTO.getId())) {
+				return ResponseEntity.ok().body(null);
+			}
+		}
+		
+		double distanciaUser = salaService.distance(new SalaDTO(sala), usrLoc.getLatitude(), usrLoc.getLongitude());
+		
+		if((distanciaUser > sala.getPerimetro()) && listAlerta.size() == 0) {
+			AlertaDTO novoAlerta = new AlertaDTO();
+			novoAlerta.setHora(new Date());
+			novoAlerta.setIdSala(sala);
+			novoAlerta.setIdUsuario(usuario);
+			novoAlerta.setLatitude(latitude);
+			novoAlerta.setLongitude(longitude);
+			
+			alertaService.create(novoAlerta);
+		}
+		
+		return ResponseEntity.ok().body(null);
+		
+	}
+	
 }
 
 

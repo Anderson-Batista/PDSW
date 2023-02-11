@@ -20,7 +20,7 @@ public class AlertaService {
 	private AlertaRepository alertaRepo;
 
 	public Alerta create(AlertaDTO a) {
-		return alertaRepo.save(new Alerta(null, a.getIdUsuario(), a.getIdSala(), a.getLatitude(), a.getLatitude(),
+		return alertaRepo.save(new Alerta(null, a.getIdUsuario(), a.getIdSala(), a.getLatitude(), a.getLongitude(),
 				a.getHora(), a.getServicosEmergencia()));
 	}
 

@@ -46,6 +46,7 @@ public class SalaService {
 		oldObj.setLatitude(objDTO.getLatitude());
 		oldObj.setUsuario(objDTO.getUsuario());
 		oldObj.setParticipantes(objDTO.getParticipantes());
+		oldObj.setSalaIniciada(objDTO.getSalaIniciada());
 		
 		return salaRepository.save(oldObj);
 	}
@@ -61,7 +62,7 @@ public class SalaService {
 	}
 	
 	public Double distance(SalaDTO sala, double lat1, double lon1) {
-		double R = 6371; // Raio da terra em km
+		double R = 6371;
 		double lat2 = sala.getLatitude();
 		double lon2 = sala.getLongitude();
 		double dLat = Math.toRadians(lat2-lat1);

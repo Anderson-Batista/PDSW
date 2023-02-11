@@ -32,8 +32,8 @@ public class Alerta implements Serializable {
 	@JoinColumn(referencedColumnName = "id")
 	private Sala idSala;
 
-	private String latitude;
-	private String longitude;
+	private double latitude;
+	private double longitude;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date hora;
@@ -45,7 +45,7 @@ public class Alerta implements Serializable {
 		super();
 	}
 
-	public Alerta(Integer id, Usuario idUsuario, Sala idSala, String latitude, String longitude, Date hora,
+	public Alerta(Integer id, Usuario idUsuario, Sala idSala, double latitude, double longitude, Date hora,
 			List<Emergencia> servicosEmergencia) {
 		super();
 		this.id = id;
@@ -81,19 +81,19 @@ public class Alerta implements Serializable {
 		this.idSala = idSala;
 	}
 
-	public String getLatitude() {
+	public double getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(String latitude) {
+	public void setLatitude(double latitude) {
 		this.latitude = latitude;
 	}
 
-	public String getLongitude() {
+	public double getLongitude() {
 		return longitude;
 	}
 
-	public void setLongitude(String longitude) {
+	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
 

@@ -60,4 +60,5 @@ public class EmergenciaController {
 		emergenciaService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
+	
 }

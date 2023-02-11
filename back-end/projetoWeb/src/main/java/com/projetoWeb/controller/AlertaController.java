@@ -20,6 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.projetoWeb.domain.Alerta;
 import com.projetoWeb.dtos.AlertaDTO;
+import com.projetoWeb.dtos.EmergenciaDTO;
 import com.projetoWeb.services.AlertaService;
 
 @RestController
@@ -58,6 +59,16 @@ public class AlertaController {
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		alertaService.delete(id);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping(value = "/deletAll")
+	public ResponseEntity<Void> deleteAll() {
+		List<AlertaDTO> list = alertaService.findAll().stream().map(alerta -> new AlertaDTO(alerta))
+				.collect(Collectors.toList());
+		for (AlertaDTO alertaDTO : list) {
+			alertaService.delete(alertaDTO.getId());
+		}
 		return ResponseEntity.noContent().build();
 	}
 }
